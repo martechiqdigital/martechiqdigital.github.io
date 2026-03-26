@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Martech IQ Digital | Adobe Experience Platform & Cloud Implementation</title>
+<meta name="description" content="Independent Adobe Experience Platform and Experience Cloud implementation consultant. 10+ years, 8 certifications, enterprise-grade delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #afafb2;
+    --accent: #c8352e;
+    --accent-soft: rgba(200,53,46,.06);
+    --border: rgba(0,0,0,.08);
+    --glass: rgba(255,255,255,.7);
+    --glass-border: rgba(255,255,255,.5);
+    --display: 'Playfair Display', Georgia, serif;
+    --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ease: cubic-bezier(.25,.1,.25,1);
+    --ease-out: cubic-bezier(0,0,.2,1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    background: #f0f2f5;
+  }
+  ::selection { background: rgba(200,53,46,.15); }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 max(24px, calc((100vw - 1100px)/2));
+    background: rgba(255,255,255,.6);
+    backdrop-filter: saturate(180%) blur(24px);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    border-bottom: .5px solid rgba(0,0,0,.06);
+  }
+  .nav-logo {
+    font-size: 14px; font-weight: 600;
+    color: var(--text); text-decoration: none;
+    letter-spacing: -.2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+  .nav-links a {
+    font-size: 12px; font-weight: 400; color: var(--text);
+    text-decoration: none; opacity: .7; transition: opacity .2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-links .cta-link { color: var(--accent); font-weight: 500; opacity: 1; }
+  .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+  .mobile-toggle span { display: block; width: 18px; height: 1.5px; background: var(--text); margin: 4px 0; }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 140px 24px 100px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,53,46,.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(59,130,246,.04) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 40% at 20% 60%, rgba(168,85,247,.04) 0%, transparent 50%),
+      linear-gradient(180deg, #f8f9fb 0%, #eef0f4 100%);
+  }
+
+  /* Animated dot grid behind hero */
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+    animation: grid-drift 20s linear infinite;
+  }
+  @keyframes grid-drift {
+    0% { background-position: 0 0; }
+    100% { background-position: 32px 32px; }
+  }
+
+  /* Floating orbs */
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: .4;
+    pointer-events: none;
+    animation: orb-float 12s ease-in-out infinite alternate;
+  }
+  .hero-orb-1 {
+    width: 400px; height: 400px;
+    background: rgba(200,53,46,.08);
+    top: -10%; right: -5%;
+    animation-duration: 14s;
+  }
+  .hero-orb-2 {
+    width: 300px; height: 300px;
+    background: rgba(59,130,246,.06);
+    bottom: 10%; left: -5%;
+    animation-duration: 18s;
+    animation-delay: -4s;
+  }
+  .hero-orb-3 {
+    width: 200px; height: 200px;
+    background: rgba(168,85,247,.05);
+    top: 30%; left: 60%;
+    animation-duration: 10s;
+    animation-delay: -7s;
+  }
+  @keyframes orb-float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, -20px) scale(1.1); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 18px 7px 12px;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
+    font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    letter-spacing: .3px;
+    margin-bottom: 36px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    position: relative; z-index: 1;
+  }
+  .hero-badge .badge-dot {
+    width: 6px; height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(1.4); }
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(44px, 6.5vw, 80px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    max-width: 900px;
+    margin-bottom: 28px;
+    position: relative; z-index: 1;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 1.55;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin-bottom: 48px;
+    font-weight: 300;
+    position: relative; z-index: 1;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 16px 36px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14px; font-weight: 500; font-family: var(--body);
+    border: none; border-radius: 100px;
+    cursor: pointer; text-decoration: none;
+    transition: transform .3s var(--ease), box-shadow .3s;
+    box-shadow: 0 4px 16px rgba(200,53,46,.25);
+    position: relative; z-index: 1;
+  }
+  .hero-cta:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(200,53,46,.3); }
+  .hero-cta svg { transition: transform .3s; }
+  .hero-cta:hover svg { transform: translateX(3px); }
+
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%); z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-tertiary); font-weight: 500;
+  }
+  .scroll-line {
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, var(--text-tertiary), transparent);
+    animation: scroll-down 2s ease infinite;
+  }
+  @keyframes scroll-down {
+    0% { opacity: 0; transform: translateY(-8px); }
+    40% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(8px); }
+  }
+
+  /* ===== STATS ===== */
+  .stats-ribbon {
+    padding: 80px 24px;
+    background:
+      linear-gradient(135deg, rgba(200,53,46,.02) 0%, transparent 50%),
+      linear-gradient(225deg, rgba(59,130,246,.02) 0%, transparent 50%),
+      #ffffff;
+    border-top: .5px solid var(--border);
+    border-bottom: .5px solid var(--border);
+  }
+  .stats-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+  }
+  .stat-item {
+    text-align: center; padding: 20px;
+    position: relative;
+  }
+  .stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute; right: 0; top: 20%; height: 60%;
+    width: .5px; background: var(--border);
+  }
+  .stat-number {
+    font-family: var(--display);
+    font-size: 48px; font-weight: 400;
+    color: var(--text); line-height: 1;
+    margin-bottom: 8px; letter-spacing: -.02em;
+  }
+  .stat-label {
+    font-size: 13px; color: var(--text-secondary);
+    font-weight: 400; line-height: 1.4;
+  }
+
+  /* ===== SHARED ===== */
+  .s-pad { padding: 120px 24px; }
+  .s-inner { max-width: 1100px; margin: 0 auto; }
+  .s-label {
+    font-size: 13px; font-weight: 500; color: var(--accent);
+    margin-bottom: 16px; letter-spacing: .5px;
+  }
+  .s-heading {
+    font-family: var(--display);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 400; line-height: 1.1;
+    letter-spacing: -.02em; margin-bottom: 20px;
+  }
+  .s-desc {
+    font-size: 17px; line-height: 1.65; color: var(--text-secondary);
+    max-width: 540px; font-weight: 300; margin-bottom: 64px;
+  }
+
+  /* ===== SERVICES ===== */
+  .services-section {
+    background:
+      radial-gradient(ellipse 50% 40% at 0% 0%, rgba(200,53,46,.03) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 100% 100%, rgba(59,130,246,.03) 0%, transparent 60%),
+      linear-gradient(180deg, #f4f5f8 0%, #eceef2 100%);
+    position: relative;
+  }
+  /* Subtle diagonal lines pattern */
+  .services-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      45deg, transparent, transparent 40px, rgba(0,0,0,.015) 40px, rgba(0,0,0,.015) 41px
+    );
+    pointer-events: none;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    position: relative; z-index: 1;
+  }
+  .svc {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.6);
+    border-radius: 16px;
+    padding: 36px 32px;
+    transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+  }
+  .svc:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.06);
+  }
+  .svc-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent-soft), rgba(200,53,46,.12));
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    color: var(--accent);
+    transition: transform .4s var(--ease);
+  }
+  .svc:hover .svc-icon { transform: scale(1.1) rotate(-3deg); }
+  .svc h3 {
+    font-size: 17px; font-weight: 600; margin-bottom: 12px;
+    letter-spacing: -.3px;
+  }
+  .svc p {
+    font-size: 14px; line-height: 1.65; color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  /* ===== APPROACH ===== */
+  .approach-section {
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(168,85,247,.02) 0%, transparent 50%),
+      linear-gradient(180deg, #fff 0%, #f8f9fb 100%);
+    position: relative;
+  }
+  .approach-track {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    position: relative;
+  }
+  .approach-track::before {
+    content: '';
+    position: absolute; top: 36px; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+  }
+  .a-step { text-align: center; padding: 0 20px; position: relative; }
+  .a-num {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-family: var(--display);
+    font-size: 26px; color: var(--text);
+    position: relative; z-index: 1;
+    transition: all .4s var(--ease);
+    box-shadow: 0 2px 8px rgba(0,0,0,.03);
+  }
+  .a-step:hover .a-num {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 6px var(--accent-soft), 0 4px 16px rgba(0,0,0,.05);
+    transform: scale(1.05);
+  }
+  .a-step h4 { font-size: 16px; font-weight: 600; margin-bottom: 10px; letter-spacing: -.2px; }
+  .a-step p { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+
+  /* ===== CREDENTIALS ===== */
+  .cred-section {
+    background:
+      radial-gradient(ellipse 50% 50% at 90% 20%, rgba(200,53,46,.03) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(59,130,246,.03) 0%, transparent 60%),
+      linear-gradient(180deg, #eceef2 0%, #f4f5f8 100%);
+    position: relative;
+  }
+  .cred-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: linear-gradient(180deg, black 30%, transparent 80%);
+    -webkit-mask-image: linear-gradient(180deg, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+  .cred-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .cred-card {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.6);
+    border-radius: 16px;
+    padding: 36px;
+    transition: box-shadow .4s var(--ease), transform .4s var(--ease);
+  }
+  .cred-card:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,.06);
+    transform: translateY(-2px);
+  }
+  .cred-tier {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--accent); margin-bottom: 20px;
+  }
+  .cred-list { list-style: none; padding: 0; }
+  .cred-list li {
+    font-size: 14px; line-height: 1.5; color: var(--text-secondary);
+    padding: 10px 0;
+    border-bottom: .5px solid rgba(0,0,0,.05);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cred-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: .5;
+  }
+  .cred-list li:last-child { border: none; }
+  .cred-meta {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    position: relative; z-index: 1;
+  }
+  .cred-meta-card {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.6);
+    border-radius: 16px;
+    padding: 28px;
+    transition: box-shadow .4s;
+  }
+  .cred-meta-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.06); }
+  .cred-meta-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--accent); margin-bottom: 12px;
+  }
+  .cred-meta-value {
+    font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+  }
+
+  /* ===== CONTACT ===== */
+  .contact-section {
+    background:
+      radial-gradient(ellipse 60% 40% at 30% 100%, rgba(200,53,46,.04) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 0%, rgba(59,130,246,.03) 0%, transparent 50%),
+      linear-gradient(180deg, #f8f9fb 0%, #ffffff 100%);
+  }
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+  }
+  .contact-left h3 {
+    font-family: var(--display);
+    font-size: 36px; font-weight: 400; line-height: 1.15;
+    letter-spacing: -.02em; margin-bottom: 20px;
+  }
+  .contact-left > p {
+    font-size: 16px; line-height: 1.65; color: var(--text-secondary);
+    font-weight: 300; margin-bottom: 40px;
+  }
+  .c-detail {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 14px; color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .c-detail-icon {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent-soft), rgba(200,53,46,.1));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); flex-shrink: 0;
+  }
+  .contact-form-wrap {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.6);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.04);
+  }
+  .f-row { margin-bottom: 20px; }
+  .f-row label {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--text); margin-bottom: 8px;
+  }
+  .f-row input, .f-row textarea, .f-row select {
+    width: 100%; padding: 14px 16px;
+    background: rgba(255,255,255,.8);
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 15px; font-family: var(--body); font-weight: 400;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .f-row input:focus, .f-row textarea:focus, .f-row select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .f-row input::placeholder, .f-row textarea::placeholder { color: var(--text-tertiary); font-weight: 300; }
+  .f-row textarea { min-height: 110px; resize: vertical; }
+  .f-half { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-submit {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: #fff;
+    font-size: 15px; font-weight: 500; font-family: var(--body);
+    border: none; border-radius: 12px; cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 12px rgba(200,53,46,.2);
+  }
+  .f-submit:hover { transform: scale(1.01); box-shadow: 0 6px 20px rgba(200,53,46,.3); }
+  .f-submit:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .form-success {
+    display: none; text-align: center; padding: 60px 24px;
+  }
+  .form-success.show { display: block; }
+  .form-success .checkmark {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(34,197,94,.08);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .form-success h4 {
+    font-family: var(--display);
+    font-size: 24px; font-weight: 400; margin-bottom: 10px;
+  }
+  .form-success p { font-size: 15px; color: var(--text-secondary); font-weight: 300; }
+  .form-error {
+    display: none; background: var(--accent-soft);
+    border: 1px solid rgba(200,53,46,.15);
+    border-radius: 10px; padding: 12px 16px;
+    margin-bottom: 20px; font-size: 13px; color: var(--accent);
+  }
+  .form-error.show { display: block; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 40px 24px;
+    border-top: .5px solid var(--border);
+    background:
+      linear-gradient(180deg, #f0f2f5 0%, #e8eaee 100%);
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 12px; color: var(--text-tertiary); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 12px; color: var(--text-secondary);
+    text-decoration: none; transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--text); }
+
+  /* ===== ANIMATIONS ===== */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity .9s var(--ease-out), transform .9s var(--ease-out);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+  .hero-anim { opacity: 0; transform: translateY(30px); animation: hero-in .9s var(--ease-out) forwards; }
+  .hero-anim-1 { animation-delay: .2s; }
+  .hero-anim-2 { animation-delay: .35s; }
+  .hero-anim-3 { animation-delay: .5s; }
+  .hero-anim-4 { animation-delay: .65s; }
+  @keyframes hero-in { to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .mobile-toggle { display: block; }
+    nav.open .nav-links {
+      display: flex; flex-direction: column;
+      position: absolute; top: 56px; left: 0; right: 0;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(20px);
+      border-bottom: .5px solid var(--border);
+      padding: 20px; gap: 16px;
+    }
+    .hero { padding: 120px 20px 80px; min-height: auto; }
+    .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2)::after { display: none; }
+    .services-grid { grid-template-columns: 1fr; }
+    .approach-track { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .approach-track::before { display: none; }
+    .cred-grid { grid-template-columns: 1fr; }
+    .cred-meta { grid-template-columns: 1fr; }
+    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+    .s-pad { padding: 80px 20px; }
+  }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 36px; }
+    .stats-inner { grid-template-columns: 1fr 1fr; }
+    .approach-track { grid-template-columns: 1fr; }
+    .f-half { grid-template-columns: 1fr; }
+    .stat-number { font-size: 36px; }
+    .hero-orb-1, .hero-orb-2, .hero-orb-3 { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span class="dot"></span>Martech IQ Digital</a>
+  <button class="mobile-toggle" onclick="this.closest('nav').classList.toggle('open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#credentials">Credentials</a></li>
+    <li><a href="#contact" class="cta-link">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <div class="hero-badge hero-anim hero-anim-1">
+    <span class="badge-dot"></span>
+    Available for new engagements
+  </div>
+  <h1 class="hero-anim hero-anim-2">Adobe martech,<br><em>implemented right</em></h1>
+  <p class="hero-sub hero-anim hero-anim-3">
+    Independent consultant with 10+ years and 8 Adobe certifications.<br>
+    AEP, Analytics, Target, Web SDK, CJA, and Real-Time CDP.
+  </p>
+  <a href="#contact" class="hero-cta hero-anim hero-anim-4">
+    Start a conversation
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
+  </a>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-ribbon">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-number">10+</div>
+      <div class="stat-label">Years in Adobe martech</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-number">8</div>
+      <div class="stat-label">Adobe certifications</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-number">30+</div>
+      <div class="stat-label">Countries served</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-number">SME</div>
+      <div class="stat-label">Adobe AEP Subject Matter Expert</div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services-section s-pad" id="services">
+  <div class="s-inner">
+    <div class="s-label reveal">Services</div>
+    <h2 class="s-heading reveal reveal-delay-1">What I help you with</h2>
+    <p class="s-desc reveal reveal-delay-2">End-to-end Adobe implementation and optimization. From architecture to go-live to enablement.</p>
+    <div class="services-grid reveal reveal-delay-3">
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 5 5-9"/></svg>
+        </div>
+        <h3>Adobe Analytics</h3>
+        <p>Implementation, tagging strategy, data layer design, report suites, and Analysis Workspace. Adobe Certified Master - Analytics Architect.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4m-9-11h4m14 0h4"/></svg>
+        </div>
+        <h3>Adobe Target</h3>
+        <p>A/B testing, MVT, personalization, experience targeting, audience setup, and A4T reporting configuration.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18m6-18v18M3 9h18M3 15h18"/></svg>
+        </div>
+        <h3>AEP / Real-Time CDP</h3>
+        <p>Schema design, datasets, data ingestion, audience segmentation, and activation. Recognized Adobe AEP Subject Matter Expert.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Web SDK & Tags</h3>
+        <p>AppMeasurement to Alloy.js migration, Launch implementation, data streams, edge network, and mobile SDK integration.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+        </div>
+        <h3>Customer Journey Analytics</h3>
+        <p>Cross-channel stitching, data views, calculated metrics, and Workspace optimization. Co-created CJA certification exam with Adobe.</p>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+        </div>
+        <h3>Adobe Campaign</h3>
+        <p>Campaign implementation, workflow design, delivery configuration, and AEP integration for cross-channel orchestration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach-section s-pad" id="approach">
+  <div class="s-inner">
+    <div class="s-label reveal">How I work</div>
+    <h2 class="s-heading reveal reveal-delay-1">Simple process, no surprises</h2>
+    <p class="s-desc reveal reveal-delay-2">I work as an extension of your team. Every engagement starts with understanding your business and ends with your team fully enabled.</p>
+    <div class="approach-track reveal reveal-delay-3">
+      <div class="a-step">
+        <div class="a-num">1</div>
+        <h4>Discovery</h4>
+        <p>Audit your current setup, understand goals, identify gaps. Everything specific to your stack.</p>
+      </div>
+      <div class="a-step">
+        <div class="a-num">2</div>
+        <h4>Solution Design</h4>
+        <p>Architecture, data layer, tagging strategy, and integration points. You approve before build starts.</p>
+      </div>
+      <div class="a-step">
+        <div class="a-num">3</div>
+        <h4>Implementation</h4>
+        <p>Build, configure, and test across environments. QA at every step. No shortcuts.</p>
+      </div>
+      <div class="a-step">
+        <div class="a-num">4</div>
+        <h4>Enablement</h4>
+        <p>Train your team, document everything, stay available. Goal is your team running it independently.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDENTIALS -->
+<section class="cred-section s-pad" id="credentials">
+  <div class="s-inner">
+    <div class="s-label reveal">Credentials</div>
+    <h2 class="s-heading reveal reveal-delay-1">Certified across the Adobe stack</h2>
+    <p class="s-desc reveal reveal-delay-2">8 Adobe certifications covering architecture, development, and business practice. Selected by Adobe as an AEP Subject Matter Expert.</p>
+    <div class="cred-grid reveal reveal-delay-3">
+      <div class="cred-card">
+        <div class="cred-tier">Expert & Master</div>
+        <ul class="cred-list">
+          <li>Adobe Certified Master - Adobe Analytics Architect</li>
+          <li>Adobe Certified Expert - Adobe Analytics Architect</li>
+          <li>Adobe Certified Expert - Adobe Analytics Developer</li>
+          <li>Adobe Certified Expert - Real-Time CDP Developer</li>
+          <li>Adobe Certified Expert - CJA Developer</li>
+        </ul>
+      </div>
+      <div class="cred-card">
+        <div class="cred-tier">Professional & Recognition</div>
+        <ul class="cred-list">
+          <li>Adobe Certified Professional - Real-Time CDP Business Practitioner</li>
+          <li>Adobe Certified Professional - CJA Business Practitioner</li>
+          <li>AEP Subject Matter Expert - co-created CJA certification exam with Adobe</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cred-meta reveal reveal-delay-4">
+      <div class="cred-meta-card">
+        <div class="cred-meta-label">Industries</div>
+        <div class="cred-meta-value">Financial Services, Insurance, eCommerce, Pharma, Retail</div>
+      </div>
+      <div class="cred-meta-card">
+        <div class="cred-meta-label">Regions</div>
+        <div class="cred-meta-value">North America, Europe (30+ countries), India, LATAM</div>
+      </div>
+      <div class="cred-meta-card">
+        <div class="cred-meta-label">Background</div>
+        <div class="cred-meta-value">Enterprise consulting firms and Adobe before going independent</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section s-pad" id="contact">
+  <div class="s-inner">
+    <div class="contact-layout">
+      <div class="contact-left reveal">
+        <div class="s-label">Contact</div>
+        <h3>Let's talk about<br>your project</h3>
+        <p>Whether you need a full AEP implementation, a Web SDK migration, an A/B testing strategy, or a second opinion on your current setup. No sales pitch, just a straightforward conversation.</p>
+        <div class="c-detail">
+          <span class="c-detail-icon">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          Toronto, Canada
+        </div>
+        <div class="c-detail">
+          <span class="c-detail-icon">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+          </span>
+          martechiqdigital@gmail.com
+        </div>
+      </div>
+      <div class="contact-form-wrap reveal reveal-delay-2">
+        <div class="form-success" id="formSuccess">
+          <div class="checkmark">
+            <svg width="28" height="28" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h4>Message sent</h4>
+          <p>Thanks for reaching out. I will get back to you within one business day.</p>
+        </div>
+        <form id="contactForm">
+          <input type="hidden" name="_subject" value="New Lead - Martech IQ Digital">
+          <input type="hidden" name="_template" value="table">
+          <input type="text" name="_honey" style="display:none" tabindex="-1">
+          <div class="form-error" id="formError">Something went wrong. Please email me directly at martechiqdigital@gmail.com</div>
+          <div class="f-half">
+            <div class="f-row">
+              <label>First name</label>
+              <input type="text" name="first_name" required placeholder="John">
+            </div>
+            <div class="f-row">
+              <label>Last name</label>
+              <input type="text" name="last_name" required placeholder="Smith">
+            </div>
+          </div>
+          <div class="f-row">
+            <label>Work email</label>
+            <input type="email" name="email" required placeholder="john@company.com">
+          </div>
+          <div class="f-row">
+            <label>Company</label>
+            <input type="text" name="company" placeholder="Company name">
+          </div>
+          <div class="f-row">
+            <label>What do you need help with?</label>
+            <select name="service">
+              <option value="">Select a service</option>
+              <option value="Adobe Analytics">Adobe Analytics</option>
+              <option value="Adobe Target / A/B Testing">Adobe Target / A/B Testing</option>
+              <option value="AEP / Real-Time CDP">AEP / Real-Time CDP</option>
+              <option value="Web SDK Migration">Web SDK Migration</option>
+              <option value="Customer Journey Analytics">Customer Journey Analytics</option>
+              <option value="Adobe Campaign">Adobe Campaign</option>
+              <option value="Other / Multiple">Other / Multiple</option>
+            </select>
+          </div>
+          <div class="f-row">
+            <label>Tell me about your project</label>
+            <textarea name="message" placeholder="What are you trying to achieve?"></textarea>
+          </div>
+          <button type="submit" class="f-submit" id="submitBtn">Send message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">&copy; 2026 Martech IQ Digital Inc.</div>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#approach">Approach</a>
+      <a href="#credentials">Credentials</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveals
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Parallax orbs on mouse move
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - .5) * 2;
+  const y = (e.clientY / window.innerHeight - .5) * 2;
+  document.querySelectorAll('.hero-orb').forEach((orb, i) => {
+    const speed = [12, 8, 15][i] || 10;
+    orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+  });
+});
+
+// Form - FormSubmit.co
+const FORM_ENDPOINT = 'https://formsubmit.co/ajax/martechiqdigital@gmail.com';
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const err = document.getElementById('formError');
+  const ok = document.getElementById('formSuccess');
+  err.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  fetch(FORM_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(Object.fromEntries(new FormData(this)))
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.success) { this.style.display = 'none'; ok.classList.add('show'); }
+    else throw new Error();
+  })
+  .catch(() => { err.classList.add('show'); btn.disabled = false; btn.textContent = 'Send message'; });
+});
+</script>
+
+</body>
+</html>
