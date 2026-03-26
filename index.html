@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Martech IQ Digital | Adobe Experience Platform & Cloud Implementation</title>
+<title>Martech IQ Digital</title>
 <meta name="description" content="Independent Adobe Experience Platform and Experience Cloud implementation consultant. 10+ years, 8 certifications, enterprise-grade delivery.">
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23c8352e'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='60' font-weight='bold' fill='white'>M</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23c8352e'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='60' font-weight='bold' fill='white'>M</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -74,60 +77,20 @@
     padding: 140px 24px 100px;
     position: relative;
     overflow: hidden;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,53,46,.06) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(59,130,246,.04) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 40% at 20% 60%, rgba(168,85,247,.04) 0%, transparent 50%),
-      linear-gradient(180deg, #f8f9fb 0%, #eef0f4 100%);
+    background: #f0f2f6;
   }
 
-  /* Animated dot grid behind hero */
-  .hero-grid {
+  /* Futuristic canvas background */
+  .hero-canvas {
     position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(0,0,0,.06) 1px, transparent 1px);
-    background-size: 32px 32px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
-    animation: grid-drift 20s linear infinite;
+    z-index: 0;
   }
-  @keyframes grid-drift {
-    0% { background-position: 0 0; }
-    100% { background-position: 32px 32px; }
+  .hero-canvas canvas {
+    width: 100%; height: 100%;
+    display: block;
   }
 
-  /* Floating orbs */
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: .4;
-    pointer-events: none;
-    animation: orb-float 12s ease-in-out infinite alternate;
-  }
-  .hero-orb-1 {
-    width: 400px; height: 400px;
-    background: rgba(200,53,46,.08);
-    top: -10%; right: -5%;
-    animation-duration: 14s;
-  }
-  .hero-orb-2 {
-    width: 300px; height: 300px;
-    background: rgba(59,130,246,.06);
-    bottom: 10%; left: -5%;
-    animation-duration: 18s;
-    animation-delay: -4s;
-  }
-  .hero-orb-3 {
-    width: 200px; height: 200px;
-    background: rgba(168,85,247,.05);
-    top: 30%; left: 60%;
-    animation-duration: 10s;
-    animation-delay: -7s;
-  }
-  @keyframes orb-float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, -20px) scale(1.1); }
-  }
+  .hero-orb { display: none; }
 
   .hero-badge {
     display: inline-flex; align-items: center; gap: 8px;
@@ -587,7 +550,7 @@
     .approach-track { grid-template-columns: 1fr; }
     .f-half { grid-template-columns: 1fr; }
     .stat-number { font-size: 36px; }
-    .hero-orb-1, .hero-orb-2, .hero-orb-3 { display: none; }
+    .hero-canvas canvas { min-height: 100vh; }
   }
 </style>
 </head>
@@ -609,10 +572,7 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
-  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-canvas"><canvas id="heroCanvas"></canvas></div>
 
   <div class="hero-badge hero-anim hero-anim-1">
     <span class="badge-dot"></span>
@@ -879,15 +839,161 @@ const obs = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-// Parallax orbs on mouse move
-document.addEventListener('mousemove', (e) => {
-  const x = (e.clientX / window.innerWidth - .5) * 2;
-  const y = (e.clientY / window.innerHeight - .5) * 2;
-  document.querySelectorAll('.hero-orb').forEach((orb, i) => {
-    const speed = [12, 8, 15][i] || 10;
-    orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+// ===== FUTURISTIC HERO CANVAS =====
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], mouse = { x: -1000, y: -1000 };
+  const PARTICLE_COUNT = 120;
+  const CONNECTION_DIST = 150;
+  const MOUSE_DIST = 200;
+
+  function resize() {
+    const hero = canvas.parentElement.parentElement;
+    w = canvas.width = hero.offsetWidth;
+    h = canvas.height = hero.offsetHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const type = Math.random();
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - .5) * .6,
+        vy: (Math.random() - .5) * .6,
+        r: type > .85 ? 2.5 + Math.random() * 2 : 1 + Math.random() * 1.5,
+        color: type > .7 ? '200,53,46' : type > .4 ? '99,130,255' : '160,120,255',
+        alpha: .3 + Math.random() * .5,
+        pulse: Math.random() * Math.PI * 2,
+        pulseSpeed: .01 + Math.random() * .02,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Light gradient background
+    const grad = ctx.createRadialGradient(w*.3, h*.3, 0, w*.5, h*.5, w*.8);
+    grad.addColorStop(0, '#f7f0ed');
+    grad.addColorStop(.3, '#f0f2f6');
+    grad.addColorStop(.6, '#eaecf3');
+    grad.addColorStop(1, '#e4e7ef');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(0,0,0,.025)';
+    ctx.lineWidth = .5;
+    const gs = 60;
+    for (let x = 0; x < w; x += gs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // Update particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.pulse += p.pulseSpeed;
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+      if (p.y < -10) p.y = h + 10;
+      if (p.y > h + 10) p.y = -10;
+
+      // Mouse repulsion
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const md = Math.sqrt(dx*dx + dy*dy);
+      if (md < MOUSE_DIST) {
+        const force = (MOUSE_DIST - md) / MOUSE_DIST * .02;
+        p.vx += dx * force;
+        p.vy += dy * force;
+      }
+      // Damping
+      p.vx *= .995;
+      p.vy *= .995;
+    });
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < CONNECTION_DIST) {
+          const alpha = (1 - dist / CONNECTION_DIST) * .1;
+          ctx.strokeStyle = `rgba(180,120,100,${alpha})`;
+          ctx.lineWidth = .5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw particles
+    particles.forEach(p => {
+      const pulseAlpha = p.alpha * (.7 + Math.sin(p.pulse) * .3);
+      const pulseR = p.r * (.9 + Math.sin(p.pulse) * .1);
+
+      // Glow
+      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, pulseR * 6);
+      glow.addColorStop(0, `rgba(${p.color},${pulseAlpha * .3})`);
+      glow.addColorStop(1, `rgba(${p.color},0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, pulseR * 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core
+      ctx.fillStyle = `rgba(${p.color},${pulseAlpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, pulseR, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Data flow lines (horizontal streams)
+    const time = Date.now() * .001;
+    for (let i = 0; i < 5; i++) {
+      const y = h * (.15 + i * .18);
+      ctx.strokeStyle = `rgba(200,53,46,${.03 + Math.sin(time + i) * .015})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let x = 0; x < w; x += 4) {
+        const yOff = Math.sin(x * .008 + time * .8 + i * 2) * 20;
+        if (x === 0) ctx.moveTo(x, y + yOff);
+        else ctx.lineTo(x, y + yOff);
+      }
+      ctx.stroke();
+    }
+
+    // Floating data fragments
+    for (let i = 0; i < 8; i++) {
+      const fx = ((time * 30 + i * 180) % (w + 100)) - 50;
+      const fy = h * (.1 + i * .12) + Math.sin(time * .5 + i) * 30;
+      ctx.fillStyle = `rgba(200,53,46,${.04 + Math.sin(time + i * .7) * .02})`;
+      ctx.fillRect(fx, fy, 40 + i * 5, 2);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  canvas.parentElement.parentElement.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
   });
-});
+  canvas.parentElement.parentElement.addEventListener('mouseleave', () => {
+    mouse.x = -1000; mouse.y = -1000;
+  });
+
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+  resize();
+  createParticles();
+  draw();
+})();
 
 // Form - FormSubmit.co
 const FORM_ENDPOINT = 'https://formsubmit.co/ajax/martechiqdigital@gmail.com';
